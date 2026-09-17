@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>A Birthday Journey for Sam</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,500&family=Poppins:wght@300;400;600;700&family=Pacifico&display=swap" rel="stylesheet">
+<style>
+/* ============ EASY EDIT CONFIG (also see CONFIG in <script> below) ============ */
+:root{
+  --gold:#f4c869;
+  --pink:#ff8fb1;
+  --purple:#b98cff;
+  --card-bg:rgba(20,16,38,0.72);
+  --text:#f3eefc;
+  --dim:#b9b0d6;
+  --bg1:#0a0620;
+  --bg2:#1a0f3a;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;}
+body{
+  font-family:'Poppins',sans-serif;
+  background:radial-gradient(ellipse at top, var(--bg2), var(--bg1) 70%);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+  position:relative;
+}
+#stars{position:fixed;inset:0;z-index:0;pointer-events:none;}
+.star{position:absolute;background:#fff;border-radius:50%;animation:twinkle 3s infinite ease-in-out;}
+@keyframes twinkle{0%,100%{opacity:.2;}50%{opacity:1;}}
+#confetti-canvas{position:fixed;inset:0;z-index:5;pointer-events:none;}
+
+.screen{
+  min-height:100vh;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  position:relative;
+  z-index:2;
+  animation:fadeIn .7s ease;
+}
+.screen.active{display:flex;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(15px);}to{opacity:1;transform:translateY(0);}}
+
+.card{
+  background:var(--card-bg);
+  backdrop-filter:blur(10px);
+  border:1px solid rgba(244,200,105,0.25);
+  border-radius:22px;
+  padding:36px 26px;
+  max-width:480px;
+  width:100%;
+  text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
+}
+h1{font-family:'Pacifico',cursive;color:var(--gold);font-size:clamp(1.8rem,7vw,2.6rem);margin-bottom:6px;}
+h2{font-family:'Playfair Display',serif;font-size:clamp(1.2rem,5vw,1.6rem);margin-bottom:14px;color:var(--pink);}
+p{line-height:1.7;font-size:clamp(0.95rem,3.8vw,1.05rem);color:var(--dim);}
+.icon{font-size:clamp(2.5rem,10vw,3.5rem);margin-bottom:10px;}
+
+.btn{
+  background:linear-gradient(90deg,var(--pink),var(--purple));
+  color:#fff;border:none;padding:13px 28px;border-radius:30px;
+  font-size:1rem;font-weight:600;cursor:pointer;margin-top:22px;
+  box-shadow:0 8px 24px rgba(185,140,255,0.4);
+  font-family:'Poppins',sans-serif;transition:transform .2s;
+}
+.btn:active{transform:scale(0.95);}
+.btn.secondary{background:transparent;border:1px solid var(--gold);color:var(--gold);box-shadow:none;margin-left:10px;}
+
+/* Password screen */
+input#pwInput{
+  width:100%;padding:13px 16px;border-radius:12px;border:1px solid rgba(244,200,105,0.4);
+  background:rgba(255,255,255,0.06);color:var(--text);font-size:1rem;text-align:center;
+  letter-spacing:2px;margin-top:10px;outline:none;
+}
+input#pwInput:focus{border-color:var(--gold);}
+.shake{animation:shake .4s;}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-8px);}75%{transform:translateX(8px);}}
+#pwError{color:var(--pink);font-size:0.85rem;margin-top:8px;height:16px;}
+
+/* Gift screen */
+.gift-box{font-size:clamp(4rem,20vw,6rem);cursor:pointer;animation:float 2.5s infinite ease-in-out;transition:transform .3s;}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+.gift-box:active{transform:scale(0.9);}
+
+/* Memories */
+.memory-nav{display:flex;justify-content:space-between;align-items:center;margin-top:18px;}
+.memory-nav button{background:none;border:1px solid var(--purple);color:var(--purple);width:38px;height:38px;border-radius:50%;font-size:1.1rem;cursor:pointer;}
+.memory-count{font-size:0.8rem;color:var(--dim);}
+.memory-text{min-height:70px;display:flex;align-items:center;justify-content:center;}
+.memory-photo{
+  width:100%;max-width:280px;aspect-ratio:4/3;object-fit:cover;
+  border-radius:14px;margin:0 auto 14px;display:block;
+  border:2px solid rgba(244,200,105,0.4);box-shadow:0 8px 24px rgba(0,0,0,0.4);
+}
+.hero-photo{
+  width:130px;height:130px;border-radius:50%;object-fit:cover;
+  border:3px solid var(--gold);box-shadow:0 0 30px rgba(244,200,105,0.5);
+  margin:0 auto 14px;display:block;
+}
+.photo-placeholder{
+  width:100%;max-width:280px;aspect-ratio:4/3;border-radius:14px;margin:0 auto 14px;
+  display:flex;align-items:center;justify-content:center;font-size:2.4rem;
+  background:linear-gradient(135deg,rgba(185,140,255,0.25),rgba(255,143,177,0.25));
+  border:2px dashed rgba(244,200,105,0.4);
+}
+.hero-placeholder{
+  width:130px;height:130px;border-radius:50%;margin:0 auto 14px;
+  display:flex;align-items:center;justify-content:center;font-size:2.6rem;
+  background:linear-gradient(135deg,rgba(185,140,255,0.3),rgba(255,143,177,0.3));
+  border:3px dashed var(--gold);
+}
+.hearts{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden;}
+.heart{position:absolute;bottom:-30px;font-size:1.2rem;opacity:0.7;animation:floatUp linear infinite;}
+@keyframes floatUp{
+  0%{transform:translateY(0) translateX(0) rotate(0deg);opacity:0;}
+  10%{opacity:0.8;}
+  100%{transform:translateY(-110vh) translateX(20px) rotate(30deg);opacity:0;}
+}
+
+/* Letter */
+.letter{font-family:'Playfair Display',serif;font-style:italic;text-align:left;color:var(--text);white-space:pre-line;font-size:1rem;line-height:1.8;max-height:40vh;overflow-y:auto;padding-right:6px;}
+
+/* Bucket list */
+.bucket-list{text-align:left;list-style:none;margin-top:10px;}
+.bucket-list li{padding:10px 0;border-bottom:1px dashed rgba(244,200,105,0.2);display:flex;gap:10px;align-items:flex-start;font-size:0.95rem;}
+.bucket-list li span.num{color:var(--gold);font-weight:600;}
+
+/* Final reveal */
+.final-name{font-family:'Pacifico',cursive;font-size:clamp(2.2rem,10vw,3.4rem);color:var(--gold);text-shadow:0 0 20px rgba(244,200,105,0.6);}
+.final-date{display:inline-block;background:linear-gradient(90deg,var(--pink),var(--purple));padding:6px 18px;border-radius:30px;font-weight:600;margin:12px 0;font-size:0.9rem;}
+
+.progress-dots{display:flex;gap:6px;justify-content:center;margin-top:20px;}
+.progress-dots span{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.2);}
+.progress-dots span.done{background:var(--gold);}
+
+@media (max-width:400px){.card{padding:28px 18px;}}
+</style>
+</head>
+<body>
+<canvas id="confetti-canvas"></canvas>
+<div id="stars"></div>
+<div class="hearts" id="hearts"></div>
+
+<!-- 1. PASSWORD -->
+<div class="screen active" id="screen-password">
+  <div class="card">
+    <div class="icon">🔐</div>
+    <h1>A Secret Awaits</h1>
+    <p>This journey is just for you. Enter the password to begin.</p>
+    <input type="password" id="pwInput" placeholder="Enter password">
+    <div id="pwError"></div>
+    <button class="btn" onclick="checkPassword()">Unlock ✨</button>
+  </div>
+</div>
+
+<!-- 2. GIFT -->
+<div class="screen" id="screen-gift">
+  <div class="card">
+    <div class="icon">🎁</div>
+    <h2>A little something for you...</h2>
+    <div class="gift-box" onclick="goTo('screen-memories')">🎁</div>
+    <p style="margin-top:14px;">Tap the gift to open it</p>
+  </div>
+</div>
+
+<!-- 3. MEMORIES -->
+<div class="screen" id="screen-memories">
+  <div class="card">
+    <div class="icon">📖</div>
+    <h2>Our Memories</h2>
+    <img class="memory-photo" id="memoryPhoto" src="" alt="memory photo" style="display:none;">
+    <div class="photo-placeholder" id="memoryPlaceholder">📷</div>
+    <div class="memory-text"><p id="memoryText"></p></div>
+    <div class="memory-nav">
+      <button onclick="changeMemory(-1)">←</button>
+      <span class="memory-count" id="memoryCount"></span>
+      <button onclick="changeMemory(1)">→</button>
+    </div>
+    <button class="btn" onclick="goTo('screen-letter')">Next: A Letter 💌</button>
+  </div>
+</div>
+
+<!-- 4. LETTER -->
+<div class="screen" id="screen-letter">
+  <div class="card">
+    <div class="icon">💌</div>
+    <h2>A Letter For You</h2>
+    <div class="letter" id="letterText"></div>
+    <button class="btn" onclick="goTo('screen-bucket')">Next: The Future 📝</button>
+  </div>
+</div>
+
+<!-- 5. BUCKET LIST -->
+<div class="screen" id="screen-bucket">
+  <div class="card">
+    <div class="icon">📝</div>
+    <h2>Things We Still Need To Do</h2>
+    <ul class="bucket-list" id="bucketList"></ul>
+    <button class="btn" onclick="goTo('screen-final')">Finally... 🎉</button>
+  </div>
+</div>
+
+<!-- 6. FINAL REVEAL -->
+<div class="screen" id="screen-final">
+  <div class="card">
+    <div class="icon">🎉</div>
+    <img class="hero-photo" id="heroPhoto" src="" alt="Sam" style="display:none;">
+    <div class="hero-placeholder" id="heroPlaceholder">🥳</div>
+    <div class="final-name" id="finalName"></div>
+    <div class="final-date" id="finalDate"></div>
+    <p id="finalMessage"></p>
+    <button class="btn" onclick="burst()">🎊 Celebrate Again</button>
+    <div class="progress-dots" id="dots"></div>
+  </div>
+</div>
+
+<script>
+/* ============ EASY EDIT CONFIG ============ */
+/*
+  TO ADD YOUR OWN PHOTOS:
+  1) Easiest: upload your photo to any free image host (imgur.com, postimages.org, etc.)
+     and paste the direct image link into "photo:" below.
+  2) Or convert your photo to a data URI (base64) at a site like base64-image.de
+     and paste the long "data:image/jpeg;base64,....." string into "photo:" instead —
+     this keeps the whole thing working as one offline file with no internet needed.
+  3) Leave "photo: ''" (empty) on any memory to skip showing an image for it.
+*/
+const CONFIG = {
+  friendName: "Sam",
+  birthdayDate: "September 18",
+  password: "sam2026",          // <-- change the secret password here
+  heroPhoto: "",                 // <-- put a photo of Sam here (shown on final screen), or leave empty
+  memories: [
+    { text: "Remember the time we stayed up all night just talking about everything and nothing? That's when I knew our friendship was something special.", photo: "" },
+    { text: "That random road trip where we got lost but ended up finding the best food stop ever — pure chaos, pure fun.", photo: "" },
+    { text: "Every time things got tough, you were the one message away that made it all feel okay again.", photo: "" },
+    { text: "All those silly inside jokes that still make us laugh years later. I wouldn't trade them for anything.", photo: "" }
+  ],
+  letter: "Dear Sam,\n\nOn your special day, I just want you to know how much your friendship means to me. You've been there through the highs and the lows, always with a laugh, a listening ear, or exactly the right words.\n\nHere's to celebrating you today — and to many more years of memories, laughter, and everything in between.\n\nHappy Birthday. You deserve all the good things coming your way.\n\nWith love,\nYour Friend",
+  bucketList: [
+    "Take that spontaneous trip we keep talking about",
+    "Try that new restaurant everyone's raving about",
+    "Have a proper reunion with the whole friend group",
+    "Learn something new together — a skill, a hobby, anything",
+    "Just keep making more memories, one year at a time"
+  ],
+  finalMessage: "Wishing you a year ahead filled with joy, growth, and everything your heart is hoping for. Happy Birthday!"
+};
+/* =========================================== */
+
+// Populate content
+document.getElementById('finalName').textContent = CONFIG.friendName + " 🎂";
+document.getElementById('finalDate').textContent = CONFIG.birthdayDate;
+document.getElementById('finalMessage').textContent = CONFIG.finalMessage;
+if(CONFIG.heroPhoto){
+  const hp = document.getElementById('heroPhoto');
+  hp.src = CONFIG.heroPhoto; hp.style.display = 'block';
+  document.getElementById('heroPlaceholder').style.display = 'none';
+}
+
+let bucketHTML = '';
+CONFIG.bucketList.forEach((item,i)=>{ bucketHTML += `<li><span class="num">${i+1}.</span> ${item}</li>`; });
+document.getElementById('bucketList').innerHTML = bucketHTML;
+
+let memIndex = 0;
+function renderMemory(){
+  const mem = CONFIG.memories[memIndex];
+  document.getElementById('memoryText').textContent = mem.text;
+  document.getElementById('memoryCount').textContent = (memIndex+1) + " / " + CONFIG.memories.length;
+  const photoEl = document.getElementById('memoryPhoto');
+  const placeholderEl = document.getElementById('memoryPlaceholder');
+  if(mem.photo){
+    photoEl.src = mem.photo; photoEl.style.display = 'block';
+    placeholderEl.style.display = 'none';
+  } else {
+    photoEl.style.display = 'none';
+    placeholderEl.style.display = 'flex';
+  }
+}
+function changeMemory(dir){
+  memIndex = (memIndex + dir + CONFIG.memories.length) % CONFIG.memories.length;
+  renderMemory();
+}
+renderMemory();
+
+// Swipe support for memories on mobile
+const memCard = document.querySelector('#screen-memories .card');
+let touchStartX = 0;
+memCard.addEventListener('touchstart', e=>{ touchStartX = e.changedTouches[0].screenX; }, {passive:true});
+memCard.addEventListener('touchend', e=>{
+  const dx = e.changedTouches[0].screenX - touchStartX;
+  if(Math.abs(dx) > 40){ changeMemory(dx < 0 ? 1 : -1); }
+}, {passive:true});
+
+const screens = ['screen-password','screen-gift','screen-memories','screen-letter','screen-bucket','screen-final'];
+function goTo(id){
+  screens.forEach(s=>document.getElementById(s).classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const dots = document.getElementById('dots');
+  if(dots){
+    dots.innerHTML = screens.map(s=>`<span class="${screens.indexOf(s)<=screens.indexOf(id)?'done':''}"></span>`).join('');
+  }
+  if(id === 'screen-final'){ setTimeout(()=>createParticles(70), 300); }
+  if(id === 'screen-letter'){ typeLetter(); }
+  window.scrollTo(0,0);
+}
+
+let letterTyped = false;
+function typeLetter(){
+  if(letterTyped) return;
+  letterTyped = true;
+  const el = document.getElementById('letterText');
+  const text = CONFIG.letter;
+  let i = 0;
+  el.textContent = '';
+  function step(){
+    if(i <= text.length){
+      el.textContent = text.slice(0, i);
+      i += 2;
+      setTimeout(step, 12);
+    }
+  }
+  step();
+}
+
+// Floating hearts
+const heartsEl = document.getElementById('hearts');
+const heartEmojis = ['💛','💕','✨','⭐'];
+for(let i=0;i<14;i++){
+  const h = document.createElement('div');
+  h.className = 'heart';
+  h.textContent = heartEmojis[Math.floor(Math.random()*heartEmojis.length)];
+  h.style.left = Math.random()*100+'%';
+  h.style.animationDuration = (8 + Math.random()*8)+'s';
+  h.style.animationDelay = (Math.random()*10)+'s';
+  heartsEl.appendChild(h);
+}
+
+function checkPassword(){
+  const val = document.getElementById('pwInput').value.trim().toLowerCase();
+  if(val === CONFIG.password.toLowerCase()){
+    goTo('screen-gift');
+  } else {
+    const card = document.querySelector('#screen-password .card');
+    card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
+    document.getElementById('pwError').textContent = "That's not quite it — try again 💭";
+  }
+}
+document.getElementById('pwInput').addEventListener('keydown', e=>{ if(e.key==='Enter') checkPassword(); });
+
+// Stars background
+const starsEl = document.getElementById('stars');
+for(let i=0;i<80;i++){
+  const s = document.createElement('div');
+  s.className='star';
+  const size = Math.random()*2+1;
+  s.style.width = size+'px'; s.style.height = size+'px';
+  s.style.left = Math.random()*100+'%'; s.style.top = Math.random()*100+'%';
+  s.style.animationDelay = (Math.random()*3)+'s';
+  starsEl.appendChild(s);
+}
+
+// Confetti
+const canvas = document.getElementById('confetti-canvas');
+const ctx = canvas.getContext('2d');
+function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+resize(); window.addEventListener('resize', resize);
+const colors = ['#f4c869','#ff8fb1','#b98cff','#7fe0ff'];
+let particles = [];
+function createParticles(count){
+  for(let i=0;i<count;i++){
+    particles.push({x:Math.random()*canvas.width,y:-20,r:Math.random()*6+4,color:colors[Math.floor(Math.random()*colors.length)],
+      speedY:Math.random()*3+2,speedX:Math.random()*2-1,rotation:Math.random()*360,rotSpeed:Math.random()*10-5});
+  }
+}
+function animate(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach((p,i)=>{
+    p.y+=p.speedY; p.x+=p.speedX; p.rotation+=p.rotSpeed;
+    ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rotation*Math.PI/180);
+    ctx.fillStyle=p.color; ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r); ctx.restore();
+    if(p.y>canvas.height+20) particles.splice(i,1);
+  });
+  requestAnimationFrame(animate);
+}
+animate();
+function burst(){ createParticles(80); }
+</script>
+</body>
+</html>
