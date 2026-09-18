@@ -240,7 +240,7 @@
         width: 100%;
         max-width: 280px;
         aspect-ratio: 4/3;
-        object-fit: contain;
+        object-fit: fill;
         border-radius: 14px;
         margin: 0 auto 12px;
         display: block;
@@ -422,7 +422,7 @@
     <div class="screen" id="screen-memories">
       <div class="card">
         <div class="icon">📖</div>
-        <h2>Our Memories</h2>
+        <h2>Special Moments</h2>
         <img
           class="memory-photo"
           id="memoryPhoto"
@@ -459,7 +459,7 @@
     <div class="screen" id="screen-bucket">
       <div class="card">
         <div class="icon">📝</div>
-        <h2>Things We Still Need To Do</h2>
+        <h2>This Things Need To Do</h2>
         <ul class="bucket-list" id="bucketList"></ul>
         <button class="btn" onclick="goTo('screen-final')">
           Finally... 🎉
@@ -527,7 +527,7 @@
           "🚗 Take a spontaneous road trip",
           "🍕 Go for an office-friends dinner",
           "🏖️ Plan a beach day ",
-          "📱4 Sponsor an iPhone for ME",
+          "📱Sponsor a iPhone for ME",
         ],
         finalMessage:
           "Wishing you a year ahead filled with joy, growth, and everything your heart is hoping for. Happy Birthday!",
@@ -650,7 +650,7 @@
 
       // Floating hearts
       const heartsEl = document.getElementById("hearts");
-      const heartEmojis = ["🎂", "💕", "✨", "⭐","🎉"];
+      const heartEmojis = ["🎂", "💕", "✨", "⭐", "🎉"];
       for (let i = 0; i < 14; i++) {
         const h = document.createElement("div");
         h.className = "heart";
@@ -757,7 +757,7 @@
         },
         {
           image: "image/WhatsApp Image 2026-09-18 at 00.32.21.jpeg",
-          text: "That day when you cried, I realized how much our friendship truly meant to me. I just wanted to be there for you, listen to you, and make you feel better. ❤️ That moment made our friendship even more special.",
+          text: "Sometimes, a single tear is enough to show how deeply a friendship matters. Some moments don’t need words—they simply become memories we carry forever. ❤️",
         },
       ];
 
